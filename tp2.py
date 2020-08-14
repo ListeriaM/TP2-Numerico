@@ -64,18 +64,23 @@ g = 9.81
 #Ingrese el paso deseado:
 h = 0.2
 
+#"""
+#Ej 1 NO AMORTIGUADO
 m = 1
 l = 1
 b = 0
 theta0 = np.radians(30)
 v0 = 0
+#"""
 
-#Ej 2
-#m = 1
-#l = 1
-#b = 0.5
-#theta0 = np.radians(30)
-#v0 = np.radians(100)
+"""
+#Ej 2 AMORTIGUADO
+m = 1
+l = 1
+b = 0.5
+theta0 = np.radians(30)
+v0 = np.radians(100)
+"""
 
 def edo_pendulo (t, y, args):
     b, m, l = args
@@ -86,32 +91,98 @@ def edo_pendulo (t, y, args):
 def energia (y, m, l):
     theta, v = y
 
-    return m*g*l*np.cos(theta)+0.5*m*((l*v)**2)
+    return m*g*l*(1-np.cos(theta))+0.5*m*((l*v)**2)
 
 y0 = [theta0, v0]
 theta = [theta0]
 v = [v0]
-t = np.arrange(0, 20, h)
+t = np.arange(0, 20, h)
 E = [energia(y0, m, l)]
 
 solucion = ODE(edo_pendulo)
 
+#""" RK4
+
 solucion.set_f_params(b, m, l).set_initial_value(y0)
 
-for i in range(len(t)):
+for i in range(len(t)-1):
     solucion.next(h)
     theta.append(solucion.y[0])
     v.append(solucion.y[1])
     E.append(energia(solucion.y, m, l))
 
 plt.figure(0)
-plt.plot(t, theta, label= 'Theta')  
-plt.plot(t, v, label= 'vel')
+plt.plot(t, theta, label = 'Theta')  
 
 plt.xlabel('t')
-plt.ylabel('theta')
-plt.title('Posicion y vel')
+plt.title('Posicion')
 plt.legend(loc='best')
 plt.grid(True)
 plt.show() 
 
+plt.figure(1)
+
+plt.plot(t, v, label = 'Velocidad')
+plt.xlabel('t')
+plt.title('Velocidad')
+plt.legend(loc='best')
+plt.grid(True)
+plt.show() 
+
+plt.figure(2)
+
+plt.plot(t, E, label = 'Energia')  
+
+plt.ylim(-5, 5)
+plt.xlabel('t')
+plt.title('Energia')
+plt.legend(loc='best')
+plt.grid(True)
+plt.show() 
+#"""
+
+"""
+solucion.set_integrator('euler')
+
+solucion.set_f_params(b, m, l).set_initial_value(y0)
+
+for i in range(len(t)-1):
+    solucion.next(h)
+    #if solucion.y[0] > theta0:
+     #   solucion.y = y0
+    #if solucion.y[0] < -theta0:
+     #   solucion.y[0] = -theta0
+      #  solucion.y[1] = 0
+    theta.append(solucion.y[0])
+    v.append(solucion.y[1])
+    E.append(energia(solucion.y, m, l))
+
+plt.figure(0)
+plt.plot(t, theta, label = 'Theta')  
+
+plt.xlabel('t')
+plt.title('Posicion')
+plt.legend(loc='best')
+plt.grid(True)
+plt.show() 
+
+plt.figure(1)
+
+plt.plot(t, v, label = 'Velocidad')
+plt.xlabel('t')
+plt.title('Velocidad')
+plt.legend(loc='best')
+plt.grid(True)
+plt.show() 
+
+plt.figure(2)
+
+plt.plot(t, E, label = 'Energia')  
+
+#plt.ylim(0, 20)
+plt.xlabel('t')
+plt.title('Energia')
+plt.legend(loc='best')
+plt.grid(True)
+plt.show() 
+"""
