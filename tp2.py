@@ -133,7 +133,7 @@ for i in range(len(t)-1):
 #"""
 
 
-#Genero graficos
+#Genero gráficos
 
 
 fig, axs = plt.subplots(3, 1)
