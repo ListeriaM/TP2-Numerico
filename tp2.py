@@ -61,8 +61,11 @@ def rk4(f, t, y, h):
 #Ingrese los datos:
 
 g = 9.81
+
 #Ingrese el paso deseado:
-h = 0.2
+h = 0.2 #propuesto
+#h = 0.02 #Funciona bien Euler Ej 2
+h= 0.0002 #Funciona bien Euler Ej 1
 
 #"""
 #Ej 1 NO AMORTIGUADO
@@ -80,7 +83,7 @@ l = 1
 b = 0.5
 theta0 = np.radians(30)
 v0 = np.radians(100)
-"""
+#"""
 
 def edo_pendulo (t, y, args):
     b, m, l = args
@@ -110,38 +113,9 @@ for i in range(len(t)-1):
     theta.append(solucion.y[0])
     v.append(solucion.y[1])
     E.append(energia(solucion.y, m, l))
-
-plt.figure(0)
-plt.plot(t, theta, label = 'Theta')  
-
-plt.xlabel('t')
-plt.title('Posicion')
-plt.legend(loc='best')
-plt.grid(True)
-plt.show() 
-
-plt.figure(1)
-
-plt.plot(t, v, label = 'Velocidad')
-plt.xlabel('t')
-plt.title('Velocidad')
-plt.legend(loc='best')
-plt.grid(True)
-plt.show() 
-
-plt.figure(2)
-
-plt.plot(t, E, label = 'Energia')  
-
-plt.ylim(-5, 5)
-plt.xlabel('t')
-plt.title('Energia')
-plt.legend(loc='best')
-plt.grid(True)
-plt.show() 
 #"""
 
-"""
+""" EULER
 solucion.set_integrator('euler')
 
 solucion.set_f_params(b, m, l).set_initial_value(y0)
@@ -156,33 +130,23 @@ for i in range(len(t)-1):
     theta.append(solucion.y[0])
     v.append(solucion.y[1])
     E.append(energia(solucion.y, m, l))
+#"""
 
-plt.figure(0)
-plt.plot(t, theta, label = 'Theta')  
 
-plt.xlabel('t')
-plt.title('Posicion')
-plt.legend(loc='best')
-plt.grid(True)
-plt.show() 
+#Genero graficos
 
-plt.figure(1)
 
-plt.plot(t, v, label = 'Velocidad')
-plt.xlabel('t')
-plt.title('Velocidad')
-plt.legend(loc='best')
-plt.grid(True)
-plt.show() 
+fig, axs = plt.subplots(3, 1)
+fig.suptitle('RK4 No Amortiguado')
+axs[0].plot(t, theta)
+axs[0].set(ylabel = 'Posicion')
+axs[0].grid(True)
+axs[1].plot(t, v)
+axs[1].set(ylabel = 'Velocidad')
+axs[1].grid(True)
+axs[2].plot(t, E)
+axs[2].set(ylabel = 'Energia')
+axs[2].grid(True)
+axs[2].set_ylim(-5,5)
+plt.show()
 
-plt.figure(2)
-
-plt.plot(t, E, label = 'Energia')  
-
-#plt.ylim(0, 20)
-plt.xlabel('t')
-plt.title('Energia')
-plt.legend(loc='best')
-plt.grid(True)
-plt.show() 
-"""
