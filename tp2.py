@@ -64,8 +64,8 @@ g = 9.81
 
 #Ingrese el paso deseado:
 h = 0.2 #propuesto
-#h = 0.02 #Funciona bien Euler Ej 2
-h= 0.0002 #Funciona bien Euler Ej 1
+#h_euler_2 = 0.02 #Funciona bien Euler Ej 2
+h_euler_1 = 0.0002 #Funciona bien Euler Ej 1
 
 #"""
 #Ej 1 NO AMORTIGUADO
@@ -97,56 +97,78 @@ def energia (y, m, l):
     return m*g*l*(1-np.cos(theta))+0.5*m*((l*v)**2)
 
 y0 = [theta0, v0]
-theta = [theta0]
-v = [v0]
-t = np.arange(0, 20, h)
-E = [energia(y0, m, l)]
+theta_rk = [theta0]
+v_rk = [v0]
+t_rk = np.arange(0, 20, h)
+E_rk = [energia(y0, m, l)]
 
-solucion = ODE(edo_pendulo)
+solucion_rk = ODE(edo_pendulo)
 
 #""" RK4
 
-solucion.set_f_params(b, m, l).set_initial_value(y0)
+solucion_rk.set_f_params(b, m, l).set_initial_value(y0)
 
-for i in range(len(t)-1):
-    solucion.next(h)
-    theta.append(solucion.y[0])
-    v.append(solucion.y[1])
-    E.append(energia(solucion.y, m, l))
+for i in range(len(t_rk)-1):
+    solucion_rk.next(h)
+    theta_rk.append(solucion_rk.y[0])
+    v_rk.append(solucion_rk.y[1])
+    E_rk.append(energia(solucion_rk.y, m, l))
 #"""
 
-""" EULER
-solucion.set_integrator('euler')
+#""" EULER
 
-solucion.set_f_params(b, m, l).set_initial_value(y0)
+solucion_euler = ODE(edo_pendulo)
 
-for i in range(len(t)-1):
-    solucion.next(h)
+solucion_euler.set_integrator('euler')
+
+solucion_euler.set_f_params(b, m, l).set_initial_value(y0)
+
+y0 = [theta0, v0]
+theta_euler = [theta0]
+v_euler = [v0]
+E_euler = [energia(y0, m, l)]
+t_euler = np.arange(0, 20, h_euler_1)
+
+
+for i in range(len(t_euler)-1):
+    solucion_euler.next(h_euler_1)
     #if solucion.y[0] > theta0:
      #   solucion.y = y0
     #if solucion.y[0] < -theta0:
      #   solucion.y[0] = -theta0
       #  solucion.y[1] = 0
-    theta.append(solucion.y[0])
-    v.append(solucion.y[1])
-    E.append(energia(solucion.y, m, l))
+    theta_euler.append(solucion_euler.y[0])
+    v_euler.append(solucion_euler.y[1])
+    E_euler.append(energia(solucion_euler.y, m, l))
 #"""
 
 
 #Genero gráficos
 
-
 fig, axs = plt.subplots(3, 1)
-fig.suptitle('RK4 No Amortiguado')
-axs[0].plot(t, theta)
+fig.suptitle('RK4 No Amortiguado h = ' + str(h))
+axs[0].plot(t_rk, theta_rk)
 axs[0].set(ylabel = 'Posicion')
 axs[0].grid(True)
-axs[1].plot(t, v)
+axs[1].plot(t_rk, v_rk)
 axs[1].set(ylabel = 'Velocidad')
 axs[1].grid(True)
-axs[2].plot(t, E)
+axs[2].plot(t_rk, E_rk)
 axs[2].set(ylabel = 'Energia')
 axs[2].grid(True)
 axs[2].set_ylim(-5,5)
 plt.show()
 
+fig2, axs2 = plt.subplots(3, 1)
+fig2.suptitle('Euler No Amortiguado h = ' + str(h_euler_1))
+axs2[0].plot(t_euler, theta_euler)
+axs2[0].set(ylabel = 'Posicion')
+axs2[0].grid(True)
+axs2[1].plot(t_euler, v_euler)
+axs2[1].set(ylabel = 'Velocidad')
+axs2[1].grid(True)
+axs2[2].plot(t_euler, E_euler)
+axs2[2].set(ylabel = 'Energia')
+axs2[2].grid(True)
+axs2[2].set_ylim(-5,5)
+plt.show()
