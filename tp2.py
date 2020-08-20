@@ -76,6 +76,8 @@ def energia (y, m, l):
 h = 0.2 #propuesto
 h_euler = 0.0002 #Funciona bien Euler Ej 1
 #h_euler = 0.002 #Funciona bien Euler Ej 2
+h_ref = 0.0002
+
 
 #""" DESCOMENTAR PARA UTILIZAR LOS PARAMETROS DEL EJ1
 #Ej 1 NO AMORTIGUADO
@@ -97,6 +99,23 @@ v0 = np.radians(100)
 
 g = 9.81
 y0 = [theta0, v0]
+
+#----------- RK4 CON PASO PEQUEÑO PARA TOMAR COMO REFERENCIA ---------------
+
+theta_ref = [theta0]
+v_ref = [v0]
+t_ref = np.arange(0, 20, h_ref)
+E_ref = [energia(y0, m, l)]
+
+solucion_ref = ODE(edo_pendulo)
+
+solucion_ref.set_f_params(b, m, l).set_initial_value(y0)
+
+for i in range(len(t_ref)-1):
+    solucion_ref.next(h_ref)
+    theta_ref.append(solucion_ref.y[0])
+    v_ref.append(solucion_ref.y[1])
+    E_ref.append(energia(solucion_ref.y, m, l))
 
 
 #----------------------- RK4 ----------------------------------
@@ -143,24 +162,32 @@ for i in range(len(t_euler)-1):
 fig, axs = plt.subplots(3, 2)
 fig.suptitle('Ej 1: no amortiguado')
 axs[0, 0].set_title('RK4 h = ' + str(h))
-axs[0, 0].plot(t_rk, theta_rk)
+axs[0, 0].plot(t_rk, theta_rk, color = 'b', label = 'RK4')
+axs[0, 0].plot(t_ref, theta_ref, color  = 'r', label = 'Ref')
+axs[0, 0].legend(loc = 'upper right')
 axs[0, 0].set(ylabel = 'Posicion [rad]')
 axs[0, 0].grid(True)
-axs[1, 0].plot(t_rk, v_rk)
-axs[1,0].set(ylabel = 'Velocidad [rad/s]')
-axs[1,0].grid(True)
-axs[2,0].plot(t_rk, E_rk)
-axs[2,0].set(ylabel = 'Energia [J]')
-axs[2,0].grid(True)
-axs[2,0].set_ylim(-5,5)
-axs[2,0].set(xlabel = 'Tiempo [s]')
-axs[0,1].set_title('Euler h = ' + str(h_euler))
-axs[0,1].plot(t_euler, theta_euler)
-axs[0,1].grid(True)
-axs[1,1].plot(t_euler, v_euler)
-axs[1,1].grid(True)
-axs[2,1].plot(t_euler, E_euler)
-axs[2,1].grid(True)
-axs[2,1].set_ylim(-5,5)
-axs[2,1].set(xlabel = 'Tiempo [s]')
+axs[1, 0].plot(t_rk, v_rk, color = 'b', label = 'RK4')
+axs[1, 0].plot(t_ref, v_ref, color  = 'r', label = 'Ref')
+axs[1, 0].set(ylabel = 'Velocidad [rad/s]')
+axs[1, 0].grid(True)
+axs[2, 0].plot(t_rk, E_rk, color = 'b', label = 'RK4')
+axs[2, 0].plot(t_ref, E_ref, color  = 'r', label = 'Ref')
+axs[2, 0].set(ylabel = 'Energia [J]')
+axs[2, 0].grid(True)
+axs[2, 0].set_ylim(-5,5)
+axs[2, 0].set(xlabel = 'Tiempo [s]')
+axs[0, 1].set_title('Euler h = ' + str(h_euler))
+axs[0, 1].plot(t_euler, theta_euler, color = 'b', label = 'Euler')
+axs[0, 1].plot(t_ref, theta_ref, color  = 'r', label = 'Ref')
+axs[0, 1].legend(loc = 'upper right')
+axs[0, 1].grid(True)
+axs[1, 1].plot(t_euler, v_euler, color = 'b', label = 'Euler')
+axs[1, 1].plot(t_ref, v_ref, color  = 'r', label = 'Ref')
+axs[1, 1].grid(True)
+axs[2, 1].plot(t_euler, E_euler, color = 'b', label = 'Euler')
+axs[2, 1].plot(t_ref, E_ref, color  = 'r', label = 'Ref')
+axs[2, 1].grid(True)
+axs[2, 1].set_ylim(-5,5)
+axs[2, 1].set(xlabel = 'Tiempo [s]')
 plt.show()
